@@ -1,0 +1,3 @@
+echo "Flask==2.2.3" > requirements.txt
+echo "NumPy==1.24.3" >> requirements.txt
+echo "scikit-learn==1.2.2" >> requirements.txt
