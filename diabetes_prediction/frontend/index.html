@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Progression Predictor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header Box -->
+    <div class="header-box">
+        <h1>Diabetes Progression Prediction</h1>
+    </div>
+
+    <!-- Form Container -->
+    <div class="container">
+        <h1>Enter Patient Details</h1>
+        <form id="predictionForm">
+            <label>Age:</label>
+            <input type="number" id="age" step="0.00000001" placeholder="Enter normalized age">
+
+            <label>Sex:</label>
+            <input type="number" id="sex" step="0.00000001" placeholder="Enter normalized sex">
+
+            <label>BMI:</label>
+            <input type="number" id="bmi" step="0.00000001" placeholder="Enter normalized BMI">
+
+            <label>Avg Blood Pressure:</label>
+            <input type="number" id="bp" step="0.00000001" placeholder="Enter normalized blood pressure">
+
+            <label>Cholesterol Level:</label>
+            <input type="number" id="chol" step="0.00000001" placeholder="Enter normalized cholesterol level">
+
+            <label>Bad Cholesterol:</label>
+            <input type="number" id="bad_chol" step="0.00000001" placeholder="Enter normalized bad cholesterol">
+
+            <label>Good Cholesterol:</label>
+            <input type="number" id="good_chol" step="0.00000001" placeholder="Enter normalized good cholesterol">
+
+            <label>Total Cholesterol/HDL Ratio:</label>
+            <input type="number" id="chol_hdl_ratio" step="0.00000001" placeholder="Enter normalized Cholesterol/HDL ratio">
+
+            <label>Triglycerides:</label>
+            <input type="number" id="triglycerides" step="0.00000001" placeholder="Enter normalized triglycerides">
+
+            <label>Glycated Hemoglobin:</label>
+            <input type="number" id="hba1c" step="0.00000001" placeholder="Enter normalized HbA1c">
+
+            <button type="submit">Predict</button>
+        </form>
+        <h1 id="result"></h1>
+    </div>
+
+    <!-- Footer Box -->
+    <div class="footer-box">
+        <p>&copy; 2025 Diabetes Prediction. All rights reserved.</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
