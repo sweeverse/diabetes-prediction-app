@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlycoTrack — Diabetes Progression Intelligence</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Nunito+Sans:wght@300;400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     LOADING OVERLAY  (shown during analysis)
+═══════════════════════════════════════════════════ -->
+<div id="loadingOverlay">
+  <div class="loading-title">Analysing your profile…</div>
+  <div style="position: relative;">
+    <div class="loading-bar-wrap">
+      <div class="loading-bar-fill" id="loadFill"></div>
+    </div>
+    <div class="loading-drops" id="loadDrops"></div>
+  </div>
+  <div class="loading-label" id="loadLabel">Initialising model</div>
+</div>
+
+<!-- Animated background canvas -->
+<canvas id="bgCanvas"></canvas>
+
+<div class="wrapper">
+
+  <!-- ═══════════════════════════════════════════════
+       NAV
+  ═══════════════════════════════════════════════ -->
+  <nav>
+    <div class="logo">
+      <!-- SVG blood-drop logo mark -->
+      <svg class="logo-icon" viewBox="0 0 80 96" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="lgGrad" cx="38%" cy="32%" r="65%">
+            <stop offset="0%"   stop-color="#C0310A"/>
+            <stop offset="100%" stop-color="#3d0000"/>
+          </radialGradient>
+        </defs>
+        <path d="M40 6 C40 6 8 44 8 60 C8 78 23 90 40 90 C57 90 72 78 72 60 C72 44 40 6 40 6Z"
+              fill="url(#lgGrad)"/>
+        <ellipse cx="28" cy="42" rx="7" ry="11"
+                 fill="rgba(255,255,255,0.18)"
+                 transform="rotate(-18,28,42)"/>
+      </svg>
+      GlycoTrack
+    </div>
+
+
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════════ -->
+  <div id="heroSection" class="hero anim">
+    <div class="hero-kicker">Clinical Intelligence Platform</div>
+    <h1>Diabetes Progression Analysis</h1>
+    <p>
+      Enter your real clinical measurements. Our machine learning model
+      trained on the Pima Indians Diabetes Dataset predicts your disease
+      progression and maps it to a complete clinical timeline.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       INPUT FORM
+  ═══════════════════════════════════════════════ -->
+  <div class="form-card anim d1" id="inputForm">
+
+    <div class="form-header">
+      <div>
+        <div class="form-title">Patient Health Profile</div>
+        <div class="form-sub">All values in standard clinical units — no normalisation required.</div>
+      </div>
+    </div>
+
+    <!-- Demographics -->
+    <div class="section-label">Demographics</div>
+    <div class="grid-2">
+      <div class="field">
+        <label>Age <span class="unit">years</span></label>
+        <input type="number" id="age" min="18" max="100" placeholder="e.g. 45">
+        <span class="field-hint">Patients aged 21 and older</span>
+      </div>
+      <div class="field">
+        <label>Biological Sex</label>
+        <div class="sex-group">
+          <button class="sex-btn" id="sM" onclick="setSex('M')">Male</button>
+          <button class="sex-btn" id="sF" onclick="setSex('F')">Female</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body Measurements -->
+    <div class="section-label">Body Measurements</div>
+    <div class="grid-2">
+      <div class="field">
+        <label>Body Mass Index <span class="unit">kg / m²</span></label>
+        <input type="number" id="bmi" step="0.1" min="10" max="70" placeholder="e.g. 27.5">
+        <span class="range-note">Normal: 18.5 – 24.9 kg/m²</span>
+      </div>
+      <div class="field">
+        <label>Mean Arterial Pressure <span class="unit">mmHg</span></label>
+        <input type="number" id="bp" min="40" max="180" placeholder="e.g. 94">
+        <span class="field-hint">(Systolic + 2 × Diastolic) ÷ 3</span>
+        <span class="range-note">Normal: 70 – 100 mmHg</span>
+      </div>
+    </div>
+
+    <!-- Lipid Panel -->
+    <div class="section-label">Lipid Panel</div>
+    <div class="grid-3">
+      <div class="field">
+        <label>Total Cholesterol <span class="unit">mg / dL</span></label>
+        <input type="number" id="tchol" min="100" max="400" placeholder="e.g. 190">
+        <span class="range-note">Desirable: &lt; 200 mg/dL</span>
+      </div>
+      <div class="field">
+        <label>LDL Cholesterol <span class="unit">mg / dL</span></label>
+        <input type="number" id="ldl" min="40" max="300" placeholder="e.g. 115">
+        <span class="range-note">Optimal: &lt; 100 mg/dL</span>
+      </div>
+      <div class="field">
+        <label>HDL Cholesterol <span class="unit">mg / dL</span></label>
+        <input type="number" id="hdl" min="20" max="100" placeholder="e.g. 50">
+        <span class="range-note">Desirable: &gt; 60 mg/dL</span>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="field">
+        <label>TC / HDL Ratio</label>
+        <input type="number" id="ratio" step="0.1" min="1" max="10" placeholder="e.g. 3.8">
+        <span class="field-hint">Total Cholesterol divided by HDL</span>
+        <span class="range-note">Optimal: &lt; 3.5</span>
+      </div>
+      <div class="field">
+        <label>Triglycerides <span class="unit">mg / dL</span></label>
+        <input type="number" id="trig" min="30" max="1000" placeholder="e.g. 130">
+        <span class="range-note">Normal: &lt; 150 mg/dL</span>
+      </div>
+    </div>
+
+    <!-- Glycaemic Markers -->
+    <div class="section-label">Glycaemic Markers</div>
+    <div class="grid-2">
+      <div class="field">
+        <label>Fasting Blood Glucose <span class="unit">mg / dL</span></label>
+        <input type="number" id="glucose" min="50" max="400" placeholder="e.g. 92">
+        <span class="range-note">Normal: 70 – 99 mg/dL</span>
+      </div>
+      <div class="field">
+        <label>HbA1c <span class="unit">% — optional</span></label>
+        <input type="number" id="hba1c" step="0.1" min="4" max="15" placeholder="e.g. 5.7">
+        <span class="range-note">Normal: &lt; 5.7%</span>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="startAnalysis()">Analyse Progression</button>
+    <div id="formErr"></div>
+  </div><!-- /form-card -->
+
+  <!-- ═══════════════════════════════════════════════
+       RESULTS PANEL
+  ═══════════════════════════════════════════════ -->
+  <div id="resultsPanel">
+
+    <!-- Results Hero -->
+    <div class="results-hero anim">
+      <h1 id="resultsHeroTitle"></h1>
+      <p id="resultsHeroSub"></p>
+    </div>
+
+    <!-- Score + Population Gauge -->
+    <div class="results-top anim">
+      <div class="res-card">
+        <div class="res-card-accent"></div>
+        <div class="res-label">Progression Score</div>
+        <div class="score-big" id="scoreVal">—</div>
+        <div id="stagePill"></div>
+        <div class="score-desc" id="scoreDesc"></div>
+      </div>
+
+      <div class="res-card">
+        <div class="res-card-accent"></div>
+        <div class="res-label">Population Percentile</div>
+        <div class="gauge-wrap">
+          <svg class="gauge-svg" viewBox="0 0 200 114">
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stop-color="#5a7a30"/>
+                <stop offset="40%"  stop-color="#C0310A"/>
+                <stop offset="100%" stop-color="#E05A20"/>
+              </linearGradient>
+            </defs>
+            <!-- Track -->
+            <path d="M 18 103 A 82 82 0 0 1 182 103"
+                  fill="none" stroke="rgba(139,26,0,0.09)"
+                  stroke-width="14" stroke-linecap="round"/>
+            <!-- Fill arc (animated via JS) -->
+            <path id="gArc" d="M 18 103 A 82 82 0 0 1 182 103"
+                  fill="none" stroke="url(#gaugeGrad)"
+                  stroke-width="14" stroke-linecap="round"
+                  stroke-dasharray="257" stroke-dashoffset="257"
+                  style="transition: stroke-dashoffset 1.4s cubic-bezier(0.23,1,0.32,1)"/>
+          </svg>
+          <div class="gauge-num" id="pctVal">—</div>
+          <div class="gauge-sub">Higher = More Advanced</div>
+        </div>
+      </div>
+    </div><!-- /results-top -->
+
+    <!-- Mini Metric Tiles -->
+    <div class="metrics-strip anim d1">
+      <div class="metric-tile">
+        <div class="metric-tile-label">BMI Category</div>
+        <div class="metric-tile-val" id="bmiCatVal">—</div>
+        <div class="metric-tile-sub" id="bmiCatSub"></div>
+      </div>
+      <div class="metric-tile">
+        <div class="metric-tile-label">Glucose Status</div>
+        <div class="metric-tile-val" id="glucCatVal">—</div>
+        <div class="metric-tile-sub" id="glucCatSub"></div>
+      </div>
+      <div class="metric-tile">
+        <div class="metric-tile-label">Lipid Risk</div>
+        <div class="metric-tile-val" id="lipidCatVal">—</div>
+        <div class="metric-tile-sub" id="lipidCatSub"></div>
+      </div>
+    </div>
+
+    <!-- Risk Factor Tiles -->
+    <div class="risk-section anim d1">
+      <div class="section-label" style="margin-bottom: 14px;">Contributing Risk Factors</div>
+      <div class="risk-grid" id="riskGrid"></div>
+    </div>
+
+    <!-- Disease Progression Timeline -->
+    <div class="section-card anim d2">
+      <h3>Where You Stand</h3>
+      <p class="sub">
+        Five clinical stages mapped against your score — from metabolically healthy
+        through advanced disease. Your position is highlighted below.
+      </p>
+      <div class="tl-track">
+        <div class="tl-spine"></div>
+        <div id="timeline"></div>
+      </div>
+    </div>
+
+    <!-- Clinical Recommendations -->
+    <div class="section-card anim d3">
+      <h3>Your Action Plan</h3>
+      <p class="sub">Targeted steps calibrated to your biomarkers and current stage.</p>
+      <div class="rec-list" id="recList"></div>
+    </div>
+
+    <button class="reset-btn" onclick="resetForm()">Run New Analysis</button>
+
+  </div><!-- /resultsPanel -->
+
+</div><!-- /wrapper -->
+
+<!-- ═══════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════ -->
+<footer>
+  GlycoTrack &nbsp;·&nbsp;
+  Pima Indians Diabetes Dataset · NIDDK / UCI ML Repository &nbsp;·&nbsp;
+  For educational use only
+</footer>
+
+<!-- ═══════════════════════════════════════════════════
+     SCRIPTS  (order matters: model → app → background)
+═══════════════════════════════════════════════════ -->
+<script src="js/model.js"></script>
+<script src="js/app.js"></script>
+<script src="js/background.js"></script>
+
+</body>
+</html>
