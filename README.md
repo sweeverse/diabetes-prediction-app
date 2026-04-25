@@ -1,50 +1,115 @@
-# GlycoTrack — Diabetes Progression Intelligence
+# 🩸 GlycoTrack — Diabetes Progression Intelligence
 
-A clinical-grade, ML-powered diabetes progression analyser built as a
-pure front-end web application. No server required.
+## 📖 Overview
+
+GlycoTrack is a fully client-side, ML-powered diabetes progression analyser. It uses a **Ridge Regression model** trained on the Pima Indians Diabetes Dataset to predict where a patient stands on the metabolic spectrum — mapped to a complete five-stage clinical timeline. No backend, no server, no install — just open and run.
 
 ---
 
-## Project Structure
+## 🌟 Features
+
+- Ridge Regression ML model trained on the Pima Indians Diabetes Dataset.
+- Real-time diabetes progression scoring (25–346 scale).
+- Five ICD-10 referenced clinical stages with personalised recommendations.
+- Animated canvas background with floating blood cells and sugar cubes.
+- Dynamic results hero that adapts tone based on the patient's stage.
+- Fully self-contained — runs from a single `index.html` with zero dependencies.
+
+---
+
+## ⚙️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| ML Model | Ridge Regression (Pima Indians Diabetes Dataset) |
+| Frontend | HTML5, CSS3, Vanilla JavaScript |
+| Visualisation | Canvas API (animated background) |
+| Styling | CSS custom properties, Cormorant Garamond + DM Mono |
+| Tools | VS Code / any text editor |
+| Deployment | GitHub Pages / any static host |
+
+---
+
+## 📂 Folder Structure
 
 ```
-GlycoTrack/
-├── index.html          ← Entry point (clean HTML, no inline CSS/JS)
-├── README.md           ← This file
+glycotrack-out/
+├── index.html              ← Entry point
+├── README.md               ← This file
 │
 ├── css/
-│   └── style.css       ← All styles: variables, layout, components,
-│                          timeline, loading overlay, responsive rules
+│   └── style.css           ← All styles: variables, layout, components,
+│                              timeline, loading overlay, responsive rules
 │
 ├── js/
-│   ├── model.js        ← ML model weights, staging data, clinical
-│   │                      category helpers, risk factor & recommendation
-│   │                      computation
-│   ├── app.js          ← UI orchestration: form validation, loading
-│   │                      animation, all render functions, reset logic
-│   └── background.js   ← Animated canvas: floating RBC images,
-│                          isometric sugar cubes, blood drops
+│   ├── model.js            ← ML model weights, staging data, clinical
+│   │                          helpers, risk factor & recommendation logic
+│   ├── app.js              ← UI orchestration: form validation, loading
+│   │                          animation, all render functions, reset logic
+│   └── background.js       ← Animated canvas: floating RBC images,
+│                              isometric sugar cubes
 │
 └── assets/
-    └── blood-cell.png  ← RBC reference image used on the canvas background
+    └── blood-cell.png      ← RBC image used on the canvas background
 ```
 
 ---
 
-## How to Run
+## 📋 Requirements
 
-### Option 1 — Open directly in a browser (recommended)
+- ✅ A modern browser (Chrome 90+, Firefox 90+, Safari 15+, Edge 90+)
+- ✅ No installs, no build tools, no server required
 
-Simply double-click `index.html`. Everything is self-contained; no build
-step or server is needed.
+---
 
-> **Note:** Some browsers block loading local image files via `file://`
-> (the RBC canvas particles will fall back to invisible until the image
-> loads). If particles don't appear, use Option 2.
+## 🔍 How It Works
+
+### 🧠 ML Model (`model.js`)
+
+- Accepts 10 clinical biomarkers as input.
+- Performs z-score normalisation internally using dataset population statistics.
+- Outputs a continuous progression score mapped to five clinical stages.
+- Computes per-biomarker risk percentages and generates personalised recommendations.
+
+### 🎨 Frontend (`app.js` + `style.css`)
+
+- Validates and collects clinical inputs from the form.
+- Runs the model and renders the score, gauge, risk bars, timeline, and recommendations.
+- Displays a dynamic results hero with stage-specific messaging.
+- Animated loading screen with rising bubble particles during processing.
+
+### 🖼️ Background (`background.js`)
+
+- Self-contained canvas animation.
+- Renders floating red blood cells (PNG) and procedural isometric sugar cubes.
+- All particles drift and wobble continuously in the background.
+
+---
+
+## 🧬 Biomarkers Used
+
+| Feature | Unit | Notes |
+|---|---|---|
+| Age | years | |
+| Biological Sex | M / F | Encoded as floats |
+| BMI | kg/m² | |
+| Mean Arterial Pressure | mmHg | (SBP + 2·DBP) ÷ 3 |
+| Total Cholesterol | mg/dL | |
+| LDL Cholesterol | mg/dL | |
+| HDL Cholesterol | mg/dL | |
+| TC/HDL Ratio | — | Total Chol ÷ HDL |
+| Triglycerides | mg/dL | Log-transformed before scoring |
+| Fasting Glucose | mg/dL | |
+
+---
+
+## 🚀 Getting Started
+
+### Option 1 — Open directly in browser (recommended)
+
+Double-click `index.html`. Everything is self-contained — no build step or server needed.
 
 ### Option 2 — Serve with a local HTTP server
-
-Any static server works. Examples:
 
 ```bash
 # Python 3
@@ -53,85 +118,43 @@ python3 -m http.server 8080
 
 # Node (npx)
 npx serve .
-# then open the URL it prints
 
 # VS Code
-# Install the "Live Server" extension, right-click index.html → Open with Live Server
+# Install "Live Server" extension → right-click index.html → Open with Live Server
 ```
 
----
+### Option 3 — Deploy to GitHub Pages
 
-## ML Model
-
-The model is a **Ridge Regression** trained on the
-[Pima Indians Diabetes Database](https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database)
-(NIDDK · UCI ML Repository · 768 patients).
-
-Inputs are entered as **real-world clinical values** (age in years,
-BMI in kg/m², cholesterol in mg/dL, etc.). The app performs z-score
-normalisation internally using population statistics from the dataset,
-so no manual normalisation is required.
-
-**Features used (10 total):**
-
-| Feature             | Unit    | Notes                              |
-|---------------------|---------|------------------------------------|
-| Age                 | years   |                                    |
-| Biological Sex      | M / F   | Encoded as sklearn dataset floats  |
-| BMI                 | kg/m²   |                                    |
-| Mean Arterial Press.| mmHg    | (SBP + 2·DBP) ÷ 3                 |
-| Total Cholesterol   | mg/dL   |                                    |
-| LDL Cholesterol     | mg/dL   |                                    |
-| HDL Cholesterol     | mg/dL   |                                    |
-| TC/HDL Ratio        | —       | Total Chol ÷ HDL                   |
-| Triglycerides       | mg/dL   | Log-transformed before scoring     |
-| Fasting Glucose     | mg/dL   |                                    |
-
-**Output:** A continuous progression score (25–346) mapped to five
-ICD-10 referenced clinical stages.
+1. Push the repo to GitHub.
+2. Go to **Settings → Pages**.
+3. Set branch to `main`, folder to `/ (root)`.
+4. Your site will be live at `https://YOUR_USERNAME.github.io/YOUR_REPO_NAME`.
 
 ---
 
-## Colour Palette
+## 🖼️ Screenshots
 
-Sourced from the uploaded blood-cell reference image:
-
-| Variable     | Hex       | Role                  |
-|--------------|-----------|-----------------------|
-| `--maroon`   | `#3d0000` | Primary text, headers |
-| `--darkred`  | `#8B1A00` | Buttons, accents      |
-| `--crimson`  | `#C0310A` | Active states, labels |
-| `--orange`   | `#E05A20` | Gradient ends         |
-| `--cream`    | `#EDD9B8` | Button text, chips    |
-| `--cream2`   | `#FAF3EA` | Page background       |
+> *(Add screenshots of the home page and results page here)*
 
 ---
 
-## File Responsibilities
+## 🎨 Colour Palette
 
-### `css/style.css`
-All visual styling. CSS custom properties at `:root` keep the palette
-consistent. Sections are clearly commented: nav, hero, form, loading
-overlay, results, timeline, recommendations, responsive breakpoints.
-
-### `js/model.js`
-Pure logic — no DOM manipulation. Exports (as globals, since no bundler
-is used): `predict()`, `getStage()`, `getPct()`, `computeRisks()`,
-`getRecs()`, `bmiCat()`, `glucCat()`, `lipidCat()`, `STAGES`.
-
-### `js/app.js`
-All DOM interaction. Reads from `model.js` globals. Handles form
-validation, the animated loading bar (with rising blood drops), and
-all result rendering (gauge, risk bars, timeline, recommendations).
-
-### `js/background.js`
-Self-contained IIFE. Loads `assets/blood-cell.png` at runtime and
-renders it on the `<canvas id="bgCanvas">` alongside procedural
-sugar cubes and mini blood drops, all rising with a gentle wobble.
+| Variable | Hex | Role |
+|---|---|---|
+| `--maroon` | `#3d0000` | Primary text, headers |
+| `--darkred` | `#8B1A00` | Buttons, accents |
+| `--crimson` | `#C0310A` | Active states, labels |
+| `--orange` | `#E05A20` | Gradient ends |
+| `--cream` | `#EDD9B8` | Button text, chips |
+| `--cream2` | `#FAF3EA` | Page background |
 
 ---
 
-## Browser Support
+## 🔐 Note on the ML Model
 
-Modern evergreen browsers (Chrome 90+, Firefox 90+, Safari 15+, Edge 90+).
-No polyfills required; no build tooling needed.
+- The Ridge Regression weights are embedded directly in `model.js`.
+- No API keys or external services are used — everything runs locally in the browser.
+- The model was trained on the [Pima Indians Diabetes Database](https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database) (NIDDK · UCI ML Repository · 768 patients).
+
+> ⚠️ GlycoTrack is for educational and informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment.
