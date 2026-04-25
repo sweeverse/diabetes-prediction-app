@@ -132,9 +132,9 @@ npx serve .
 
 ---
 
-## 🖼️ Screenshots
+## 🌐 Live Demo
 
-> *(Add screenshots of the home page and results page here)*
+👉 [diabetes-prediction-app-one.vercel.app](https://diabetes-prediction-app-one.vercel.app)
 
 ---
 
